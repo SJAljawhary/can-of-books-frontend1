@@ -13,37 +13,79 @@ class MyFavoriteBooks extends React.Component {
     super(props);
     this.state = {
       bookData: [],
-      showModal : false
+      showModal: false,
+      userEmail: '',
     }
   }
   componentDidMount = async () => {
 
     const { user } = this.props.auth0;
+
+    await this.setState({
+      userEmail: `${user.email}`
+    })
+
     //http://localhost:3003/books?userEmail=sndjehad@gmail.com
 
-    let url = `http://localhost:3003/books?userEmail=${user.email}`
+    let url = `http://localhost:3003/books?userEmail=${this.state.userEmail}`;
 
     let responseData = await axios.get(url);
 
     await this.setState({
       bookData: responseData.data
+
     })
 
   }
 
-  addBook = async (event) =>{
+    addBook = async (event) => {
     event.preventDefault();
 
-    let bookName = event.target.bookName.value;
-    let bookDesc = event.target.bookDesc.value;
-    let bookStatus = event.target.bookStatus.value;
-    let bookImage = event.target.bookImage.value;
-    
+      let userEmail = this.state.userEmail;
+      let bookName = event.target.bookName.value;
+      let bookDesc = event.target.bookDesc.value;
+      let bookStatus = event.target.bookStatus.value;
+      let bookImage = event.target.bookImage.value;
+
+      const bookFormData = {
+
+        userEmail : this.state.userEmail,
+        bookName : event.target.bookName.value,
+        bookDesc : event.target.bookDesc.value,
+        bookStatus : event.target.bookStatus.value,
+        bookImage : event.target.bookImage.value,
+      }
+
+      let booksData = await axios.post(`${this.state.server}/books` , bookFormData)
+
+      this.setState({
+
+        bookData : booksData.data
+      })
   }
 
-  handleModalShow = () => {
+  deleteBook = async (id) => {
+
+   
+
+    let booksData = await axios.delete(`http://localhost:3003/books/${id}?email=${this.state.userEmail}`)
+
     this.setState({
-      showModal : true
+
+      bookData : booksData.data
+    })
+
+  }
+
+  showModalHandler = async () => {
+    await this.setState({
+      showModal: true
+    })
+  }
+
+  handleCloseModal = async () => {
+    await this.setState({
+      showModal: false
     })
   }
 
@@ -65,12 +107,15 @@ class MyFavoriteBooks extends React.Component {
                 <Card.Body> Name :{item.name}</Card.Body>
                 <Card.Body> Description :{item.description}</Card.Body>
                 <Card.Body> Status : {item.status}</Card.Body>
+                <Button  onClick={() => this.deleteBook(item._id)} >Delete Book</Button>
+
               </Card>
             )
           })
         }
-        <Button onClick={this.handleModalShow} variant="primary" type="submit" >Add Book</Button>
-        {/* <BookFormModal showModal={this.state.showModal} /> */}
+        <Button  onClick={this.showModalHandler} variant="primary" type="submit" >Add Book</Button>
+        
+        <BookFormModal addBook={this.addBook} show={this.state.showModal} handleCloseModal={this.handleCloseModal} />
 
       </div>
     )
