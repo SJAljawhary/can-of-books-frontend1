@@ -18,7 +18,7 @@ class BookFormModal extends Component {
             <>
                 {isAuthenticated &&
                     <>
-                        <Modal show={this.props.showModal} onHide={this.props.handleCloseModal}>
+                        <Modal show={this.props.show}>
                             <Modal.Header closeButton>
                                 <Modal.Title>Add your favourite book</Modal.Title>
                             </Modal.Header>
@@ -41,12 +41,13 @@ class BookFormModal extends Component {
                                     <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                         <Form.Control type="link" placeholder="Book image" name="bookImage" />
                                     </Form.Group>
-
-
-
-                                    <Button variant="primary" type="submit" onHide={this.props.handleCloseModal}>Close</Button>
-
+                                                            
+                                                            
+                                    <Button variant="primary" type="submit" >Save</Button>
+                                                                  
                                 </Form>
+
+                                <Button variant="primary" type="submit" onClick={this.props.onHide}>Close</Button>
                             </Modal.Body>
                         </Modal>
 
