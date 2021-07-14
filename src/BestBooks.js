@@ -15,6 +15,7 @@ class MyFavoriteBooks extends React.Component {
       bookData: [],
       showModal: false,
       userEmail: '',
+      server : process.env.REACT_APP_SERVER_URL
     }
   }
   componentDidMount = async () => {
@@ -41,12 +42,6 @@ class MyFavoriteBooks extends React.Component {
     addBook = async (event) => {
     event.preventDefault();
 
-      let userEmail = this.state.userEmail;
-      let bookName = event.target.bookName.value;
-      let bookDesc = event.target.bookDesc.value;
-      let bookStatus = event.target.bookStatus.value;
-      let bookImage = event.target.bookImage.value;
-
       const bookFormData = {
 
         userEmail : this.state.userEmail,
@@ -56,7 +51,9 @@ class MyFavoriteBooks extends React.Component {
         bookImage : event.target.bookImage.value,
       }
 
-      let booksData = await axios.post(`${this.state.server}/books` , bookFormData)
+      // console.log()
+
+      let booksData = await axios.post(`${this.state.server}/addbook` , bookFormData)
 
       this.setState({
 
@@ -64,11 +61,13 @@ class MyFavoriteBooks extends React.Component {
       })
   }
 
-  deleteBook = async (id) => {
+  deleteBook = async (index) => {
 
-   
+     let paramsObj = {
+       userEmail : this.state.userEmail
+     }
 
-    let booksData = await axios.delete(`http://localhost:3003/books/${id}?email=${this.state.userEmail}`)
+    let booksData = await axios.delete(`${this.state.server}/deleteBook/${index}` ,{params:paramsObj})
 
     this.setState({
 
@@ -107,7 +106,7 @@ class MyFavoriteBooks extends React.Component {
                 <Card.Body> Name :{item.name}</Card.Body>
                 <Card.Body> Description :{item.description}</Card.Body>
                 <Card.Body> Status : {item.status}</Card.Body>
-                <Button  onClick={() => this.deleteBook(item._id)} >Delete Book</Button>
+                {/* <Button  onClick={() => this.deleteBook(index)} >Delete Book</Button> */}
 
               </Card>
             )
