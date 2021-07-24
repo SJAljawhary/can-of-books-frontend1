@@ -36,7 +36,7 @@ class MyFavoriteBooks extends React.Component {
 
     //http://localhost:3003/books?userEmail=sndjehad@gmail.com
 
-    let url = `http://localhost:3003/books?userEmail=${this.state.userEmail}`;
+    let url = `${process.env.REACT_APP_SERVER_URL}/books?userEmail=${this.state.userEmail}`;
 
     let responseData = await axios.get(url);
 
